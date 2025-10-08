@@ -1,2 +1,10 @@
-idf_component_register(SRCS "hello_world_main.c"
-                    INCLUDE_DIRS "")
+idf_component_register( SRCS            "main.c"
+                                        "./APP/Src/app_key.c"
+                                        "./APP/Src/app_ble.c"
+                                        "./BSP/Src/bsp_nvs_driver.c"
+                                        "./BSP/Src/bsp_net_driver.c"
+                                        "./BSP/Src/bsp_key_driver.c"
+                                        "./BSP/Src/bsp_ble_driver.c"
+                        INCLUDE_DIRS    ""
+                                        "./APP/Inc/"
+                                        "./BSP/Inc/")
