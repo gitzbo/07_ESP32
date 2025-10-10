@@ -26,7 +26,7 @@ char shellBuffer[512];
  * 
  * @return unsigned int 写入实际长度
  */
-unsigned int userShellWrite(char *data, unsigned short len)
+signed short userShellWrite(char *data, unsigned short len)
 {
     return uart_write_bytes(SHELL_UART, (const char *)data, len);
 }
@@ -39,7 +39,7 @@ unsigned int userShellWrite(char *data, unsigned short len)
  * 
  * @return unsigned char 读取实际长度
  */
-signed char userShellRead(char *data, unsigned short len)
+signed short userShellRead(char *data, unsigned short len)
 {
     return uart_read_bytes(SHELL_UART, (uint8_t *)data, len, portMAX_DELAY);
 }

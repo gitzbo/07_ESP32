@@ -12,9 +12,12 @@
 #define __APP_KEY_H__
 
 #include "esp_log.h"
+
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+
 #include "bsp_key_driver.h"
+
 #include "multi_button.h"
 
 #define APP_KEY_TASK_NAME    "KEY_TASK"

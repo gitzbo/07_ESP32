@@ -12,56 +12,55 @@
 #include "bsp_ble_driver.h"
 
 
-#define TAG "EXAMPLE"
+#define TAG "BLE_DRIVER"
 
-#define CID_ESP 0x02E5                                          /**< 乐鑫的分配id号 */  
-
-static uint8_t dev_uuid[16] = {0xdd, 0xdd};                     /**< 设备UUID */
+#define CID_ESP 0x02E5                                                  /**< 乐鑫的分配id号 */  
+static uint8_t dev_uuid[16] = {0xdd, 0xdd};                             /**< 设备UUID */
 
 /**< 配置服务参数 */
-static esp_ble_mesh_cfg_srv_t config_server = {
-    /* 3 transmissions with 20ms interval */
-    .net_transmit       = ESP_BLE_MESH_TRANSMIT(2, 20),         /**< 网络传输状态 */
-    .relay              = ESP_BLE_MESH_RELAY_DISABLED,          /**< 中继模式状态 */
-    .relay_retransmit   = ESP_BLE_MESH_TRANSMIT(2, 20),         /**< 中继重传状态 */
-    .beacon             = ESP_BLE_MESH_BEACON_ENABLED,          /**< 安全网络信标状态 */
-#if defined(CONFIG_BLE_MESH_GATT_PROXY_SERVER)  
-    .gatt_proxy         = ESP_BLE_MESH_GATT_PROXY_ENABLED,      /**< GATT代理状态 */
-#else
-    .gatt_proxy         = ESP_BLE_MESH_GATT_PROXY_NOT_SUPPORTED,
-#endif
-#if defined(CONFIG_BLE_MESH_FRIEND)
-    .friend_state       = ESP_BLE_MESH_FRIEND_ENABLED,
-#else
-    .friend_state       = ESP_BLE_MESH_FRIEND_NOT_SUPPORTED,    /**< 朋友节点状态 */
-#endif
-    .default_ttl        = 7,                                    /**< 默认电平 */
-};
+static esp_ble_mesh_cfg_srv_t config_server = {     
+    /* 3 transmissions with 20ms interval */        
+    .net_transmit       = ESP_BLE_MESH_TRANSMIT(2, 20),                 /**< 网络传输状态 */
+    .relay              = ESP_BLE_MESH_RELAY_DISABLED,                  /**< 中继模式状态 */
+    .relay_retransmit   = ESP_BLE_MESH_TRANSMIT(2, 20),                 /**< 中继重传状态 */
+    .beacon             = ESP_BLE_MESH_BEACON_ENABLED,                  /**< 安全网络信标状态 */
+#if defined(CONFIG_BLE_MESH_GATT_PROXY_SERVER)          
+    .gatt_proxy         = ESP_BLE_MESH_GATT_PROXY_ENABLED,              /**< GATT代理状态 */
+#else       
+    .gatt_proxy         = ESP_BLE_MESH_GATT_PROXY_NOT_SUPPORTED,        /**< GATT代理状态 */
+#endif      
+#if defined(CONFIG_BLE_MESH_FRIEND)     
+    .friend_state       = ESP_BLE_MESH_FRIEND_ENABLED,      
+#else       
+    .friend_state       = ESP_BLE_MESH_FRIEND_NOT_SUPPORTED,            /**< 朋友节点状态 */
+#endif      
+    .default_ttl        = 7,                                            /**< 默认电平 */
+};      
 
-/**< 开关服务参数 */
-ESP_BLE_MESH_MODEL_PUB_DEFINE(onoff_pub_0, 2 + 3, ROLE_NODE);   /**< 设置默认参数 */
-static esp_ble_mesh_gen_onoff_srv_t onoff_server_0 = {          /**< 开关服务0 */
-    .rsp_ctrl = {                                               /**< 服务器模型接收消息的响应控制 */
-        .get_auto_rsp = ESP_BLE_MESH_SERVER_AUTO_RSP,           /**< 自动回复 */
-        .set_auto_rsp = ESP_BLE_MESH_SERVER_AUTO_RSP,           /**< 自动回复 */
-    },
-};
+/**< 开关服务参数 */        
+ESP_BLE_MESH_MODEL_PUB_DEFINE(onoff_pub_0, 2 + 3, ROLE_NODE);           /**< 设置默认参数 */
+static esp_ble_mesh_gen_onoff_srv_t onoff_server_0 = {                  /**< 开关服务0 */
+    .rsp_ctrl = {                                                       /**< 服务器模型接收消息的响应控制 */
+        .get_auto_rsp = ESP_BLE_MESH_SERVER_AUTO_RSP,                   /**< 自动回复 */
+        .set_auto_rsp = ESP_BLE_MESH_SERVER_AUTO_RSP,                   /**< 自动回复 */
+    },      
+};      
 
-/**< 开关服务参数 */
-ESP_BLE_MESH_MODEL_PUB_DEFINE(onoff_pub_1, 2 + 3, ROLE_NODE);   /**< 设置默认参数 */
-static esp_ble_mesh_gen_onoff_srv_t onoff_server_1 = {          /**< 开关服务1 */
-    .rsp_ctrl = {                                               /**< 服务器模型接收消息的响应控制 */
-        .get_auto_rsp = ESP_BLE_MESH_SERVER_RSP_BY_APP,         /**< 应用回复 */
-        .set_auto_rsp = ESP_BLE_MESH_SERVER_RSP_BY_APP,         /**< 应用回复 */
-    },
-};
+/**< 开关服务参数 */        
+ESP_BLE_MESH_MODEL_PUB_DEFINE(onoff_pub_1, 2 + 3, ROLE_NODE);           /**< 设置默认参数 */
+static esp_ble_mesh_gen_onoff_srv_t onoff_server_1 = {                  /**< 开关服务1 */
+    .rsp_ctrl = {                                                       /**< 服务器模型接收消息的响应控制 */
+        .get_auto_rsp = ESP_BLE_MESH_SERVER_RSP_BY_APP,                 /**< 应用回复 */
+        .set_auto_rsp = ESP_BLE_MESH_SERVER_RSP_BY_APP,                 /**< 应用回复 */
+    },      
+};      
 
-/**< 开关服务参数 */
-ESP_BLE_MESH_MODEL_PUB_DEFINE(onoff_pub_2, 2 + 3, ROLE_NODE);   /**< 设置默认参数 */
-static esp_ble_mesh_gen_onoff_srv_t onoff_server_2 = {          /**< 开关服务2 */
-    .rsp_ctrl = {                                               /**< 服务器模型接收消息的响应控制 */
-        .get_auto_rsp = ESP_BLE_MESH_SERVER_AUTO_RSP,           /**< 自动回复 */
-        .set_auto_rsp = ESP_BLE_MESH_SERVER_RSP_BY_APP,         /**< 应用回复 */
+/**< 开关服务参数 */        
+ESP_BLE_MESH_MODEL_PUB_DEFINE(onoff_pub_2, 2 + 3, ROLE_NODE);           /**< 设置默认参数 */
+static esp_ble_mesh_gen_onoff_srv_t onoff_server_2 = {                  /**< 开关服务2 */
+    .rsp_ctrl = {                                                       /**< 服务器模型接收消息的响应控制 */
+        .get_auto_rsp = ESP_BLE_MESH_SERVER_AUTO_RSP,                   /**< 自动回复 */
+        .set_auto_rsp = ESP_BLE_MESH_SERVER_RSP_BY_APP,                 /**< 应用回复 */
     },
 };
 
@@ -94,10 +93,10 @@ static esp_ble_mesh_comp_t composition = {                              /**< 节
 static esp_ble_mesh_prov_t provision = {                                /**< 配置属性和能力 */
     .uuid               = dev_uuid,                                     /**< 设备UUID */
 #if 0
-    .output_size = 4,
-    .output_actions = ESP_BLE_MESH_DISPLAY_NUMBER,
-    .input_size = 4,
-    .input_actions = ESP_BLE_MESH_PUSH,
+    .output_size        = 4,                                            /**< 配置oob大小 */
+    .output_actions     = ESP_BLE_MESH_DISPLAY_NUMBER,                  /**< 支持oob操作 */
+    .input_size         = 4,                                            /**< 输入大小 */
+    .input_actions      = ESP_BLE_MESH_PUSH,                            /**< 支持输入操作 */
 #else
     .output_size        = 0,                                            /**< 配置oob大小 */
     .output_actions     = 0,                                            /**< 支持oob操作 */
@@ -114,9 +113,9 @@ static void prov_complete(  uint16_t net_idx,
     // board_led_operation(LED_G, LED_OFF);
 }
 
-static void example_change_led_state(esp_ble_mesh_model_t *model,
-                                     esp_ble_mesh_msg_ctx_t *ctx, 
-                                     uint8_t onoff)
+static void bsp_change_led_state(esp_ble_mesh_model_t *model,
+                                 esp_ble_mesh_msg_ctx_t *ctx, 
+                                 uint8_t onoff)
 {
     uint16_t primary_addr = esp_ble_mesh_get_primary_element_address();
     uint8_t elem_count = esp_ble_mesh_get_element_count();
@@ -131,7 +130,7 @@ static void example_change_led_state(esp_ble_mesh_model_t *model,
             }
         }
     } else if (ESP_BLE_MESH_ADDR_IS_GROUP(ctx->recv_dst)) {
-        if (esp_ble_mesh_is_model_subscribed_to_group(model, ctx->recv_dst)) {
+        if (esp_ble_mesh_is_model_subscribed_to_group(model, ctx->recv_dst)) {          /**< 检查模型是否已订阅指定的组地址 */
             // led = &led_state[model->element->element_addr - primary_addr];
             // board_led_operation(led->pin, onoff);
         }
@@ -141,9 +140,9 @@ static void example_change_led_state(esp_ble_mesh_model_t *model,
     }
 }
 
-static void example_handle_gen_onoff_msg(esp_ble_mesh_model_t *model,
-                                         esp_ble_mesh_msg_ctx_t *ctx,
-                                         esp_ble_mesh_server_recv_gen_onoff_set_t *set)
+static void bsp_handle_gen_onoff_msg(esp_ble_mesh_model_t *model,
+                                     esp_ble_mesh_msg_ctx_t *ctx,
+                                     esp_ble_mesh_server_recv_gen_onoff_set_t *set)
 {
     esp_ble_mesh_gen_onoff_srv_t *srv = (esp_ble_mesh_gen_onoff_srv_t *)model->user_data;
 
@@ -179,7 +178,7 @@ static void example_handle_gen_onoff_msg(esp_ble_mesh_model_t *model,
                                     sizeof(srv->state.onoff),                   /**< 消息长度 */
                                     &srv->state.onoff,                          /**< 要发送的负载参数 */
                                     ROLE_NODE);                                 /**< 发送角色 */
-        example_change_led_state(model, ctx, srv->state.onoff);
+        bsp_change_led_state(model, ctx, srv->state.onoff);
         break;
 
     default:
@@ -187,8 +186,8 @@ static void example_handle_gen_onoff_msg(esp_ble_mesh_model_t *model,
     }
 }
 
-static void example_ble_mesh_provisioning_cb(esp_ble_mesh_prov_cb_event_t event,
-                                             esp_ble_mesh_prov_cb_param_t *param)
+static void bsp_ble_mesh_provisioning_cb(esp_ble_mesh_prov_cb_event_t event,
+                                         esp_ble_mesh_prov_cb_param_t *param)
 {
     switch (event) {
     case ESP_BLE_MESH_PROV_REGISTER_COMP_EVT:               /**< 初始化 BLE Mesh 配置功能及内部数据信息完成事件 */
@@ -229,31 +228,31 @@ static void example_ble_mesh_provisioning_cb(esp_ble_mesh_prov_cb_event_t event,
     }
 }
 
-static void example_ble_mesh_generic_server_cb(esp_ble_mesh_generic_server_cb_event_t event,
-                                               esp_ble_mesh_generic_server_cb_param_t *param)
+static void bsp_ble_mesh_generic_server_cb(esp_ble_mesh_generic_server_cb_event_t event,
+                                           esp_ble_mesh_generic_server_cb_param_t *param)
 {
     esp_ble_mesh_gen_onoff_srv_t *srv;
     ESP_LOGI(TAG, "event 0x%02x, opcode 0x%04" PRIx32 ", src 0x%04x, dst 0x%04x",
         event, param->ctx.recv_op, param->ctx.addr, param->ctx.recv_dst);
 
     switch (event) {
-    case ESP_BLE_MESH_GENERIC_SERVER_STATE_CHANGE_EVT:                      /**< 接收状态消息回调 */
+    case ESP_BLE_MESH_GENERIC_SERVER_STATE_CHANGE_EVT:                                      /**< 接收状态消息回调 */
         ESP_LOGI(TAG, "ESP_BLE_MESH_GENERIC_SERVER_STATE_CHANGE_EVT");
-        if (param->ctx.recv_op == ESP_BLE_MESH_MODEL_OP_GEN_ONOFF_SET ||    /**< 当消息是set或unack状态时触发 */
+        if (param->ctx.recv_op == ESP_BLE_MESH_MODEL_OP_GEN_ONOFF_SET ||                    /**< 当消息是set或unack状态时触发 */
             param->ctx.recv_op == ESP_BLE_MESH_MODEL_OP_GEN_ONOFF_SET_UNACK) {
             ESP_LOGI(TAG, "onoff 0x%02x", param->value.state_change.onoff_set.onoff);
-            example_change_led_state(param->model, &param->ctx, param->value.state_change.onoff_set.onoff);
+            bsp_change_led_state(param->model, &param->ctx, param->value.state_change.onoff_set.onoff);
         }
         break;
-    case ESP_BLE_MESH_GENERIC_SERVER_RECV_GET_MSG_EVT:                      /**< 接收回复消息回调 */
+    case ESP_BLE_MESH_GENERIC_SERVER_RECV_GET_MSG_EVT:                                      /**< 接收回复消息回调 */
         ESP_LOGI(TAG, "ESP_BLE_MESH_GENERIC_SERVER_RECV_GET_MSG_EVT");
-        if (param->ctx.recv_op == ESP_BLE_MESH_MODEL_OP_GEN_ONOFF_GET) {    /**< 获取消息操作码 */
+        if (param->ctx.recv_op == ESP_BLE_MESH_MODEL_OP_GEN_ONOFF_GET) {                    /**< 获取消息操作码 */
             srv = (esp_ble_mesh_gen_onoff_srv_t *)param->model->user_data;
             ESP_LOGI(TAG, "onoff 0x%02x", srv->state.onoff);
-            example_handle_gen_onoff_msg(param->model, &param->ctx, NULL);
+            bsp_handle_gen_onoff_msg(param->model, &param->ctx, NULL);
         }
         break;
-    case ESP_BLE_MESH_GENERIC_SERVER_RECV_SET_MSG_EVT:                      /**< 接收设置消息回调 */
+    case ESP_BLE_MESH_GENERIC_SERVER_RECV_SET_MSG_EVT:                                      /**< 接收设置消息回调 */
         ESP_LOGI(TAG, "ESP_BLE_MESH_GENERIC_SERVER_RECV_SET_MSG_EVT");
         if (param->ctx.recv_op == ESP_BLE_MESH_MODEL_OP_GEN_ONOFF_SET ||    
             param->ctx.recv_op == ESP_BLE_MESH_MODEL_OP_GEN_ONOFF_SET_UNACK) {
@@ -266,7 +265,7 @@ static void example_ble_mesh_generic_server_cb(esp_ble_mesh_generic_server_cb_ev
                                 param->value.set.onoff.trans_time, 
                                 param->value.set.onoff.delay);
             }
-            example_handle_gen_onoff_msg(param->model, &param->ctx, &param->value.set.onoff);
+            bsp_handle_gen_onoff_msg(param->model, &param->ctx, &param->value.set.onoff);   /**< 处理onoff消息 */
         }
         break;
     default:
@@ -275,7 +274,7 @@ static void example_ble_mesh_generic_server_cb(esp_ble_mesh_generic_server_cb_ev
     }
 }
 
-static void example_ble_mesh_config_server_cb(esp_ble_mesh_cfg_server_cb_event_t event,
+static void bsp_ble_mesh_config_server_cb(esp_ble_mesh_cfg_server_cb_event_t event,
                                               esp_ble_mesh_cfg_server_cb_param_t *param)
 {
     /**< 判断是否为配置服务状态 */
@@ -318,9 +317,9 @@ static esp_err_t ble_mesh_init(void)
     esp_err_t err = ESP_OK;
 
     /**< 将回调注册到驱动中 */
-    esp_ble_mesh_register_prov_callback(example_ble_mesh_provisioning_cb);                  /**< 注册 BLE Mesh 配置回调。 */
-    esp_ble_mesh_register_config_server_callback(example_ble_mesh_config_server_cb);        /**< 注册 BLE Mesh 配置服务器模型回调 */
-    esp_ble_mesh_register_generic_server_callback(example_ble_mesh_generic_server_cb);      /**< 注册 BLE Mesh 通用服务器模型回调 */
+    esp_ble_mesh_register_prov_callback(bsp_ble_mesh_provisioning_cb);                  /**< 注册 BLE Mesh 配置回调。 */
+    esp_ble_mesh_register_config_server_callback(bsp_ble_mesh_config_server_cb);        /**< 注册 BLE Mesh 配置服务器模型回调 */
+    esp_ble_mesh_register_generic_server_callback(bsp_ble_mesh_generic_server_cb);      /**< 注册 BLE Mesh 通用服务器模型回调 */
 
     /**< 蓝牙mesh初始化 */
     err = esp_ble_mesh_init(&provision, &composition);
@@ -355,46 +354,42 @@ void ble_mesh_get_dev_uuid(uint8_t *dev_uuid)
      * And using device address here is to avoid using the same device uuid
      * by different unprovisioned devices.
      */
-    memcpy(dev_uuid + 2, esp_bt_dev_get_address(), BD_ADDR_LEN);
+    memcpy(dev_uuid + 2, esp_bt_dev_get_address(), BD_ADDR_LEN);                    /**< 获取设备UUID */
 }
 
 bsp_ble_driver_status_e bsp_ble_driver_init(void)
 {
     esp_err_t ret;
 
-    /**< 蓝牙控制器内存释放 */
-    ESP_ERROR_CHECK(esp_bt_controller_mem_release(ESP_BT_MODE_CLASSIC_BT));
+    ESP_ERROR_CHECK(esp_bt_controller_mem_release(ESP_BT_MODE_CLASSIC_BT));         /**< 蓝牙控制器内存释放 */
+    esp_bt_controller_config_t bt_cfg = BT_CONTROLLER_INIT_CONFIG_DEFAULT();        /**< 获取蓝牙控制器默认配置 */
 
-    /**< esp 蓝牙控制器初始化 */
-    esp_bt_controller_config_t bt_cfg = BT_CONTROLLER_INIT_CONFIG_DEFAULT();
-    ret = esp_bt_controller_init(&bt_cfg);
+    ret = esp_bt_controller_init(&bt_cfg);                                          /**< 蓝牙控制器初始化 */
     if (ret) {
         ESP_LOGE(TAG, "%s initialize controller failed", __func__);
         return ret;
     }
-    ret = esp_bt_controller_enable(ESP_BT_MODE_BLE);
+
+    ret = esp_bt_controller_enable(ESP_BT_MODE_BLE);                                /**< 启用蓝牙控制器 */
     if (ret) {
         ESP_LOGE(TAG, "%s enable controller failed", __func__);
         return ret;
     }
 
-    /**< esp 蓝牙初始化 */
-    ret = esp_bluedroid_init();
+    ret = esp_bluedroid_init();                                                     /**< 蓝牙初始化 */
     if (ret) {
         ESP_LOGE(TAG, "%s init bluetooth failed", __func__);
         return ret;
     }
-    ret = esp_bluedroid_enable();
+
+    ret = esp_bluedroid_enable();                                                   /**< 蓝牙使能 */
     if (ret) {
         ESP_LOGE(TAG, "%s enable bluetooth failed", __func__);
         return ret;
     }
 
-    /**< 获取设备UUID */
-    ble_mesh_get_dev_uuid(dev_uuid);
-
-    /**< 配置蓝牙mesh子系统 */
-    ret = ble_mesh_init();
+    ble_mesh_get_dev_uuid(dev_uuid);                                                /**< 获取设备UUID */
+    ret = ble_mesh_init();                                                          /**< 蓝牙mesh初始化 */
     if (ret) {
         ESP_LOGE(TAG, "Bluetooth mesh init failed (err %d)", ret);
         return BSP_BLE_DRIVER_STATUS_ERROR;

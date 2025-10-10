@@ -30,12 +30,14 @@
 /**< BSP库 */
 #include "bsp_nvs_driver.h"
 #include "bsp_key_driver.h"
-#include "bsp_net_driver.h"
 #include "bsp_ble_driver.h"
+#include "bsp_wifi_driver.h"
 
 /**< APP库 */
 #include "app_key.h"
 #include "app_ble.h"
+#include "app_mqtt.h"
+#include "app_ota.h"
 
 /**< 开源库 */
 #include "shell_port.h"

@@ -29,9 +29,11 @@ void app_main(void)
 
 static void _board_init(void)
 {
+    /**< 看门狗初始化 */
     bsp_nvs_driver_init();                      /**< nvs初始化 */
     bsp_key_driver_init(key_isr_handler);       /**< 按键初始化 */
     bsp_ble_driver_init();                      /**< BLE初始化 */
+    bsp_wifi_driver_init();                     /**< WIFI初始化 */
 }
 
 static void _app_init(void)
@@ -39,6 +41,8 @@ static void _app_init(void)
     userShellInit();                            /**< Shell应用初始化 */
     app_key_init();                             /**< 按键应用初始化 */
     app_ble_init();                             /**< 蓝牙应用初始化 */
+    app_mqtt_init();                            /**< MQTT应用初始化 */
+    app_ota_init();                             /**< OTA应用初始化 */
 }
 
 

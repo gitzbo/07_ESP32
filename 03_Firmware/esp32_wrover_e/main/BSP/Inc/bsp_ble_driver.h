@@ -30,10 +30,6 @@
 #include "esp_ble_mesh_generic_model_api.h"
 #include "esp_ble_mesh_local_data_operation_api.h"
 
-
-
-// #include "ble_mesh_example_init.h"
-
 typedef enum {
     BSP_BLE_DRIVER_STATUS_OK = 0,
     BSP_BLE_DRIVER_STATUS_ERROR,

@@ -46,20 +46,20 @@ static void _key_scan_handler_cb(Button* btn)
 app_key_status_e app_key_init(void)
 {
     /**< 1.将按键注册到扫描函数中 */
-    button_init(&btn1, bsp_key_driver_get_status, 0, BSP_KEY_DRIVER_ID_USR);
-    button_attach(&btn1, BTN_SINGLE_CLICK,      _key_scan_handler_cb);
-    button_attach(&btn1, BTN_DOUBLE_CLICK,      _key_scan_handler_cb);
-    button_attach(&btn1, BTN_LONG_PRESS_START,  _key_scan_handler_cb);
-    button_attach(&btn1, BTN_LONG_PRESS_HOLD,   _key_scan_handler_cb);
-    button_start(&btn1);
+    button_init(&btn1, bsp_key_driver_get_status, 0, BSP_KEY_DRIVER_ID_USR);            /**< 注册按键到扫描函数 */
+    button_attach(&btn1, BTN_SINGLE_CLICK,      _key_scan_handler_cb);                  /**< 注册单击按键事件 */
+    button_attach(&btn1, BTN_DOUBLE_CLICK,      _key_scan_handler_cb);                  /**< 注册双击按键事件 */
+    button_attach(&btn1, BTN_LONG_PRESS_START,  _key_scan_handler_cb);                  /**< 注册长按开始按键事件 */
+    button_attach(&btn1, BTN_LONG_PRESS_HOLD,   _key_scan_handler_cb);                  /**< 注册长按保持按键事件 */
+    button_start(&btn1);                                                                /**< 启动btn1按键 */
     
     /**< 2.创建按键线程 */
-    xTaskCreate(_key_task,  
-                APP_KEY_TASK_NAME, 
-                APP_KEY_TASK_STACK,       
-                APP_KEY_TASK_PARAM,       
-                APP_KEY_TASK_PRIO,          
-                APP_KEY_TASK_HANDLER);
+    xTaskCreate(_key_task,                                                              /**< 按键线程 */
+                APP_KEY_TASK_NAME,                                                      /**< 线程名称 */
+                APP_KEY_TASK_STACK,                                                     /**< 线程堆栈大小 */
+                APP_KEY_TASK_PARAM,                                                     /**< 用户参数 */
+                APP_KEY_TASK_PRIO,                                                      /**< 线程优先级 */
+                APP_KEY_TASK_HANDLER);                                                  /**< 线程句柄 */
 
     return APP_KEY_STATUS_OK;
 }

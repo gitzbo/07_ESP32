@@ -18,16 +18,16 @@ bsp_key_driver_status_e bsp_key_driver_init(void *cb)
     }
 
     gpio_config_t io_conf = {
-        .intr_type       = GPIO_INTR_NEGEDGE,
-        .mode            = GPIO_MODE_INPUT,
-        .pin_bit_mask    = (1ULL << BSP_KEY_USR_PIN),
-        .pull_down_en    = GPIO_PULLDOWN_DISABLE,
-        .pull_up_en      = GPIO_PULLUP_ENABLE,
+        .intr_type       = GPIO_INTR_NEGEDGE,                           /**< 下降沿中断 */
+        .mode            = GPIO_MODE_INPUT,                             /**< 输入模式 */
+        .pin_bit_mask    = (1ULL << BSP_KEY_USR_PIN),                   /**< 配置按键引脚 */
+        .pull_down_en    = GPIO_PULLDOWN_DISABLE,                       /**< 下拉 */
+        .pull_up_en      = GPIO_PULLUP_ENABLE,                          /**< 上拉 */
     };
-    gpio_config(&io_conf);
+    gpio_config(&io_conf);                                              /**< 配置GPIO */    
 
-    gpio_install_isr_service(0);
-    gpio_isr_handler_add(BSP_KEY_USR_PIN, cb, (void *)BSP_KEY_USR_PIN);
+    gpio_install_isr_service(0);                                        /**< 安装GPIO中断服务 */
+    gpio_isr_handler_add(BSP_KEY_USR_PIN, cb, (void *)BSP_KEY_USR_PIN); /**< 添加中断处理函数 */
 
     return BSP_KEY_DRIVER_OK;
 }

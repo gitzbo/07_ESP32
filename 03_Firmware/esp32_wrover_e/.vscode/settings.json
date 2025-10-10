@@ -42,6 +42,22 @@
     "esp_ble_mesh_defs.h": "c",
     "esp_ble_mesh_local_data_operation_api.h": "c",
     "esp_ble_mesh_common_api.h": "c",
-    "esp_ble_mesh_networking_api.h": "c"
+    "esp_ble_mesh_networking_api.h": "c",
+    "bsp_wifi_driver.h": "c",
+    "esp_ble_mesh_generic_model_api.h": "c",
+    "app_mqtt.h": "c",
+    "sdkconfig.h": "c",
+    "netdb.h": "c",
+    "queue.h": "c",
+    "app_ota.h": "c",
+    "esp_flash_partitions.h": "c",
+    "esp_app_format.h": "c",
+    "errno.h": "c",
+    "esp_system.h": "c",
+    "esp_event.h": "c",
+    "esp_partition.h": "c",
+    "inttypes.h": "c",
+    "esp_ota_ops.h": "c",
+    "app_ui.h": "c"
   }
 }
